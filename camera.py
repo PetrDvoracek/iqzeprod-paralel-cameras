@@ -23,32 +23,50 @@ class MultiSourceCV2Gen:
         self.last_capture_time = time()
 
         return captures, duration_between_catures
+    
+    def change_res(self, width, height):
+        [c.set(3, width) for c in self.captures]
+        [c.set(4, height) for c in self.captures]
+
+    def close(self):
+        print('closing ...')
+        print([x.release() for x in self.captures])
 
 if __name__ == '__main__':
-    img_gen = MultiSourceCV2Gen(2, 3)
+    cameras = (0, 3, 2)
+    print(f'initialize cameras {cameras}')
+    img_gen = MultiSourceCV2Gen(*cameras)
+    img_gen.change_res(width=320, height=240)
 
-    @timeit(times=1000)
+    print('showing ...')
+    try:
+        cv2.namedWindow("stabilized image", cv2.WINDOW_AUTOSIZE );
+        for img_batch , duration in img_gen:
+            img2show = np.concatenate(img_batch, axis=1)
+            # cv2.putText(img2show, f'{1 / timed.mean():0.0f} FPS (average)', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, 255)
+            cv2.putText(img2show, f'{1 / duration:0.0f} FPS (actual)', (100, 100), cv2.FONT_HERSHEY_COMPLEX, 1, 255)
+            img2show = cv2.resize(img2show, (300, 300))
+            cv2.imshow('stabilized image', img2show)
+            print(duration)
+            if cv2.waitKey(1) == ord('q'):
+                break
+    finally:
+        cv2.destroyAllWindows()
+        img_gen.close()
+
+
+    print('timing ...')
+    @timeit(times=10)
     def measure_capture_from_gen(gen):
-        next(gen)
+        batch = next(gen)
+        print(type(batch))
 
     timed = measure_capture_from_gen(img_gen)
 
-    # try:
-    #     for img_batch , duration in img_gen:
-    #         img2show = np.concatenate(img_batch, axis=1)
-    #         cv2.putText(img2show, f'{1 / timed.mean():0.0f} FPS (average)', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, 255)
-    #         cv2.putText(img2show, f'{1 / duration:0.0f} FPS (actual)', (100, 100), cv2.FONT_HERSHEY_COMPLEX, 1, 255)
-    #         cv2.imshow('image from specified cameras', img2show)
-    #         print(duration)
-    #         if cv2.waitKey(1) == ord('q'):
-    #             break
-    # finally:
-    #     cv2.destroyAllWindows()
-
     print(timed.describe())
 
-    import matplotlib.pyplot as plt
-    sns.boxplot(y=timed)
-    sns.swarmplot(y=timed, color='.2', size=5, linewidth=2.5)
-    plt.show()
+    # import matplotlib.pyplot as plt
+    # sns.boxplot(y=timed)
+    # sns.swarmplot(y=timed, color='.2', size=5, linewidth=2.5)
+    # plt.show()
 
