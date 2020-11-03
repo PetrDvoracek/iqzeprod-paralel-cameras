@@ -14,7 +14,6 @@ from utils import timeit
 @click.argument('input-shape', nargs=3, type=(int, int, int))
 @click.argument('classes', type=int)
 @click.argument('save-path')
-@click.option('--channels', default=3)
 def save(input_shape, classes, save_path, channels):
     model = MobileNetV2(input_shape=input_shape, include_top=False, classes=classes)
     model.save(save_path)
