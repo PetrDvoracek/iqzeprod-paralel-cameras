@@ -55,7 +55,7 @@ def benchmark_trt(model_path, batch_size, times, skip, csv, input_shape):
     signature_keys = list(model.signatures.keys())
     infer = model.signatures['serving_default']
 
-    images = np.zeros((batch_size, *input_shape))
+    images = np.random.rand(batch_size, *input_shape)
     images = tf.constant(images, dtype=tf.float32)
     print(f'batch size: {batch_size}')
 

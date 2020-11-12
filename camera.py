@@ -3,6 +3,7 @@ import numpy as np
 from time import time
 import pandas as pd
 import seaborn as sns
+import click
 
 from utils import timeit
 import datetime
@@ -33,10 +34,10 @@ class MultiSourceCV2Gen:
         print([x.release() for x in self.captures])
 
 if __name__ == '__main__':
-    cameras = (0, 3, 2)
+    cameras = (0, 1, 2, 3 )
     print(f'initialize cameras {cameras}')
     img_gen = MultiSourceCV2Gen(*cameras)
-    img_gen.change_res(width=320, height=240)
+    img_gen.change_res(width=160, height=120)
 
     print('showing ...')
     try:
@@ -45,7 +46,7 @@ if __name__ == '__main__':
             img2show = np.concatenate(img_batch, axis=1)
             # cv2.putText(img2show, f'{1 / timed.mean():0.0f} FPS (average)', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, 255)
             cv2.putText(img2show, f'{1 / duration:0.0f} FPS (actual)', (100, 100), cv2.FONT_HERSHEY_COMPLEX, 1, 255)
-            img2show = cv2.resize(img2show, (300, 300))
+            img2show = cv2.resize(img2show, (len(cameras) * 160, 120))
             cv2.imshow('stabilized image', img2show)
             print(duration)
             if cv2.waitKey(1) == ord('q'):

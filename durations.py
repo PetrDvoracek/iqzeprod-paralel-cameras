@@ -27,10 +27,10 @@ def plot(input_folder, part_of_csv_name, to_file, replace):
         series_renamed = {**series_renamed, **{name.replace(replace, '').replace('.csv', ''): durations}}
 
     df = pd.DataFrame(series_renamed)
-    # zscores = zscore(df)
-    # abs_z_scores = np.abs(zscores)
-    # filtered_entries = (abs_z_scores < 3).all(axis=1)
-    # df = df[filtered_entries]
+    zscores = zscore(df)
+    abs_z_scores = np.abs(zscores)
+    filtered_entries = (abs_z_scores < 3).all(axis=1)
+    df = df[filtered_entries]
 
     sorted_names = [str(x) for x in list(range(1,len(duration_csvs) + 1))]
 
@@ -38,8 +38,9 @@ def plot(input_folder, part_of_csv_name, to_file, replace):
 
 
     sns.set(rc={'figure.figsize':(11.7,8.27)})
-    sns.set_style(None)
-    plot = sns.boxplot(data=df)
+    sns.set_style("whitegrid")
+    plot = sns.violinplot(data=df)
+    plt.ylim(0, df.max().max())
     plot.set(
         xlabel='Number of images processed in paralel',
         ylabel='Time in milliseconds',
