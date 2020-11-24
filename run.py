@@ -84,8 +84,10 @@ def main(model_path, n_cams, trt, prediction_folder):
             save_cam(cam, prediction_folder)
 
             predicted_class = np.argmax(pred, axis=1)
-            #predicted_class = 1
-            cam2show = np.array([cam[x,:,:,predicted_class[x]] for x in predicted_class])
+            #predicted_class = [1]
+            #cam2show = np.array([cam[:,:,:,x] for x in predicted_class])
+            #cam2show = np.array([cam[x,:,:,predicted_class[x]] for x in predicted_class]) #puvodni!
+            cam2show = np.array([cam[0,:,:,x] for x in predicted_class])
             cam2show = np.array([ndimage.zoom(x, (224 / x.shape[1], 224 / x.shape[0]), order=0) for x in cam2show])
             cam2show = np.array([cv2.merge([x, x, x]) for x in cam2show])
             cam2show = np.concatenate(cam2show, axis=1)
