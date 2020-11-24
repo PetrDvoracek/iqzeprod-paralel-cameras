@@ -83,26 +83,26 @@ def main(model_path, n_cams, trt, prediction_folder):
                             f.write('\n')
             save_cam(cam, prediction_folder)
 
-            predicted_class = np.argmax(pred, axis=1)
-            #predicted_class = [1]
-            #cam2show = np.array([cam[:,:,:,x] for x in predicted_class])
-            #cam2show = np.array([cam[x,:,:,predicted_class[x]] for x in predicted_class]) #puvodni!
-            cam2show = np.array([cam[0,:,:,x] for x in predicted_class])
-            cam2show = np.array([ndimage.zoom(x, (224 / x.shape[1], 224 / x.shape[0]), order=0) for x in cam2show])
-            cam2show = np.array([cv2.merge([x, x, x]) for x in cam2show])
-            cam2show = np.concatenate(cam2show, axis=1)
-            print(cam2show.shape, img2show.shape)
-            img2show = np.concatenate((img2show, cam2show))
+            # predicted_class = np.argmax(pred, axis=1)
+            # #predicted_class = [1]
+            # #cam2show = np.array([cam[:,:,:,x] for x in predicted_class])
+            # #cam2show = np.array([cam[x,:,:,predicted_class[x]] for x in predicted_class]) #puvodni!
+            # cam2show = np.array([cam[0,:,:,x] for x in predicted_class])
+            # cam2show = np.array([ndimage.zoom(x, (224 / x.shape[1], 224 / x.shape[0]), order=0) for x in cam2show])
+            # cam2show = np.array([cv2.merge([x, x, x]) for x in cam2show])
+            # cam2show = np.concatenate(cam2show, axis=1)
+            # print(cam2show.shape, img2show.shape)
+            # img2show = np.concatenate((img2show, cam2show))
 
 
 
-            # cv2.putText(img2show, f'{1 / timed.mean():0.0f} FPS (average)', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, 255)
-            cv2.putText(img2show, f'{1 / duration:0.0f} FPS (actual)', (100, 100), cv2.FONT_HERSHEY_COMPLEX, 1, 255)
-            # img2show = cv2.resize(img2show, (n_cams * 160, 120))
-            cv2.imshow('stabilized image', img2show)
-            print(duration)
-            if cv2.waitKey(1) == ord('q'):
-                raise StopIteration('STOP!')
+            # # cv2.putText(img2show, f'{1 / timed.mean():0.0f} FPS (average)', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, 255)
+            # cv2.putText(img2show, f'{1 / duration:0.0f} FPS (actual)', (100, 100), cv2.FONT_HERSHEY_COMPLEX, 1, 255)
+            # # img2show = cv2.resize(img2show, (n_cams * 160, 120))
+            # cv2.imshow('stabilized image', img2show)
+            # print(duration)
+            # if cv2.waitKey(1) == ord('q'):
+            #     raise StopIteration('STOP!')
     finally:
         image_gen.close()
         cv2.destroyAllWindows()
